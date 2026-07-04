@@ -1,12 +1,13 @@
-import crypto from "node:crypto";
+import bcrypt from "bcryptjs";
 import type { User, Post } from "@snapfeed/shared/src/types";
 
 // NOTE: this is an in-memory "database" standing in for a real one so the
 // practice assessment doesn't require any external services to run.
 
+const BCRYPT_ROUNDS = 12;
+
 function weakHash(password: string): string {
-  // md5, no salt -- intentionally weak for the exercise
-  return crypto.createHash("md5").update(password).digest("hex");
+  return bcrypt.hashSync(password, BCRYPT_ROUNDS);
 }
 
 export const users: User[] = [

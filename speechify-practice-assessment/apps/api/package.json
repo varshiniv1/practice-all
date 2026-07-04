@@ -10,11 +10,13 @@
   },
   "dependencies": {
     "@snapfeed/shared": "workspace:*",
+    "bcryptjs": "^3.0.3",
     "cors": "^2.8.5",
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^3.0.0",
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "@types/jsonwebtoken": "^9.0.6",

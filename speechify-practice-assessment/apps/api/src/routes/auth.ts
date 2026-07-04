@@ -1,4 +1,5 @@
 import { Router } from "express";
+import bcrypt from "bcryptjs";
 import { users, findUserByUsername, weakHash } from "../db";
 import { signToken } from "../middleware/auth";
 
@@ -35,7 +36,7 @@ router.post("/login", (req, res) => {
   const { username, password } = req.body ?? {};
   const user = findUserByUsername(username);
 
-  if (!user || user.passwordHash !== weakHash(password)) {
+  if (!user || !bcrypt.compareSync(password, user.passwordHash)) {
     return res.status(401).json({ error: "Invalid credentials" });
   }
 
