@@ -1,11 +1,19 @@
 import { Router } from "express";
+import rateLimit from "express-rate-limit";
 import bcrypt from "bcryptjs";
 import { users, findUserByUsername, weakHash } from "../db";
 import { signToken } from "../middleware/auth";
 
 const router = Router();
 
-router.post("/register", (req, res) => {
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+router.post("/register", authLimiter, (req, res) => {
   const { username, email, password, bio } = req.body ?? {};
 
   if (!username || !password) {
@@ -33,7 +41,7 @@ router.post("/register", (req, res) => {
   res.status(201).json({ token, user: safeNewUser });
 });
 
-router.post("/login", (req, res) => {
+router.post("/login", authLimiter, (req, res) => {
   const { username, password } = req.body ?? {};
   const user = findUserByUsername(username);
 
