@@ -10,7 +10,7 @@
   },
   "rules": {
     "no-unused-vars": "off",
-    "no-eval": "off",
+    "no-eval": "error",
     "no-console": "off",
     "@typescript-eslint/no-explicit-any": "off"
   }
