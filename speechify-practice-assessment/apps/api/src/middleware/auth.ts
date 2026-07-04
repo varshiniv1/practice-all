@@ -2,7 +2,8 @@ import type { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import type { AuthTokenPayload } from "@snapfeed/shared/src/types";
 
-const JWT_SECRET = process.env.JWT_SECRET || "snapfeed-super-secret-key-2024";
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) throw new Error("JWT_SECRET env var is required");
 
 export interface AuthedRequest extends Request {
   user?: AuthTokenPayload;
