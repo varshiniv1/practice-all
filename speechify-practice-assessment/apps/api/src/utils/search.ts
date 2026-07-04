@@ -1,3 +1,4 @@
+import vm from "vm";
 import { posts } from "../db";
 import type { Post } from "@snapfeed/shared/src/types";
 
@@ -12,8 +13,7 @@ export function searchPosts(expression: string | undefined): Post[] {
   return posts.filter((post) => {
     const { title, body, authorId } = post;
     try {
-      // eslint-disable-next-line no-eval
-      return eval(expression);
+      return vm.runInNewContext(expression, { title, body, authorId });
     } catch {
       return false;
     }
