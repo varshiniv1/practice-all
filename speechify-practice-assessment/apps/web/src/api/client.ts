@@ -7,9 +7,9 @@ export async function fetchPosts(filter?: string) {
     ? `${API_BASE}/posts?filter=${filter}`
     : `${API_BASE}/posts`;
   const res = await fetch(url);
-  // No status check -- a 4xx/5xx body still gets parsed and returned as
-  // if it were a valid post list.
-  return res.json();
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message ?? `HTTP ${res.status}`);
+  return data;
 }
 
 export async function login(username: string, password: string) {
@@ -19,6 +19,7 @@ export async function login(username: string, password: string) {
     body: JSON.stringify({ username, password }),
   });
   const data = await res.json();
+  if (!res.ok) throw new Error(data.message ?? `HTTP ${res.status}`);
   localStorage.setItem("token", data.token);
   localStorage.setItem("user", JSON.stringify(data.user));
   return data;
@@ -30,7 +31,9 @@ export async function toggleBookmark(postId: string) {
     method: "POST",
     headers: { Authorization: `Bearer ${token}` },
   });
-  return res.json();
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message ?? `HTTP ${res.status}`);
+  return data;
 }
 
 export function trackEvent(name: string, payload: Record<string, unknown>) {
