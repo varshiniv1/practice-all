@@ -19,4 +19,24 @@ describe("auth", () => {
 
     expect(res.status).toBe(401);
   });
+
+  it("[security] login response must not expose passwordHash", async () => {
+    const res = await request(app)
+      .post("/auth/login")
+      .send({ username: "alice", password: "alice123" });
+
+    expect(res.status).toBe(200);
+    expect(res.body.user).toBeDefined();
+    expect(res.body.user.passwordHash).toBeUndefined();
+  });
+
+  it("[security] register response must not expose passwordHash", async () => {
+    const res = await request(app)
+      .post("/auth/register")
+      .send({ username: "testleak", password: "hunter2" });
+
+    expect(res.status).toBe(201);
+    expect(res.body.user).toBeDefined();
+    expect(res.body.user.passwordHash).toBeUndefined();
+  });
 });

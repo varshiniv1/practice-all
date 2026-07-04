@@ -29,7 +29,8 @@ router.post("/register", (req, res) => {
     isAdmin: newUser.isAdmin,
   });
 
-  res.status(201).json({ token, user: newUser });
+  const { passwordHash: _h1, ...safeNewUser } = newUser;
+  res.status(201).json({ token, user: safeNewUser });
 });
 
 router.post("/login", (req, res) => {
@@ -46,7 +47,8 @@ router.post("/login", (req, res) => {
     isAdmin: user.isAdmin,
   });
 
-  res.json({ token, user });
+  const { passwordHash: _h2, ...safeUser } = user;
+  res.json({ token, user: safeUser });
 });
 
 export default router;
