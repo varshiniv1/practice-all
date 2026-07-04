@@ -24,14 +24,9 @@ router.get("/", async (req, res) => {
 
   const matched = searchPosts(filter);
 
-  // Fetch the author for each post one at a time instead of batching --
-  // fine for 40 seed posts, but this is called on every request and the
-  // per-post lookup is about to get a lot more expensive (see findUserById).
-  const enriched = [];
-  for (const post of matched) {
-    const author = await lookupAuthor(post.authorId);
-    enriched.push({ ...post, author });
-  }
+  const enriched = await Promise.all(
+    matched.map(async (post) => ({ ...post, author: await lookupAuthor(post.authorId) }))
+  );
 
   cacheSet(cacheKey, enriched);
   res.json(enriched);
