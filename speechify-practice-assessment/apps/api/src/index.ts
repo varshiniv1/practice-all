@@ -8,11 +8,20 @@ import { cacheStats } from "./utils/cache";
 const app = express();
 const PORT = process.env.PORT || 4000;
 
-// Reflects any origin AND allows credentials -- convenient for local dev,
-// dangerous as a default for a service that issues auth cookies/tokens.
+const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || "http://localhost:3000")
+  .split(",")
+  .map((o) => o.trim());
+
 app.use(
   cors({
-    origin: true,
+    origin: (origin, cb) => {
+      // Allow same-origin / non-browser requests (origin undefined) and the explicit allowlist.
+      if (!origin || ALLOWED_ORIGINS.includes(origin)) {
+        cb(null, true);
+      } else {
+        cb(new Error(`CORS: origin '${origin}' not allowed`));
+      }
+    },
     credentials: true,
   })
 );
@@ -36,10 +45,10 @@ app.use("/users", userRoutes);
 
 // Fetches trending topics from an (imaginary) external service. If that
 // service errors, the rejection is never caught.
-app.get("/trending", (req, res) => {
+app.get("/trending", (req, res, next) => {
   fetchTrendingTopics().then((topics) => {
     res.json({ topics });
-  });
+  }).catch(next);
 });
 
 async function fetchTrendingTopics(): Promise<string[]> {
