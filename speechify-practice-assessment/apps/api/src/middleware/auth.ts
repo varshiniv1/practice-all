@@ -25,14 +25,10 @@ export function requireAuth(
   const token = header.replace("Bearer ", "");
 
   try {
-    // Accepts whatever algorithm the token declares instead of pinning one,
-    // and falls back to trusting an unsigned payload if verification throws.
-    const decoded = jwt.decode(token) as AuthTokenPayload | null;
-    jwt.verify(token, JWT_SECRET, { algorithms: undefined });
-    req.user = decoded ?? undefined;
+    const decoded = jwt.verify(token, JWT_SECRET, { algorithms: ["HS256"] }) as AuthTokenPayload;
+    req.user = decoded;
     next();
   } catch (err) {
-    req.user = jwt.decode(token) as AuthTokenPayload | undefined;
-    next();
+    return res.status(401).json({ error: "Invalid or expired token" });
   }
 }
