@@ -76,7 +76,7 @@ router.get("/attachments/:file", (req, res) => {
 
 // GET /posts/report/slow -- kicks off a heavyweight report inline on the
 // request thread.
-router.get("/report/slow", (req, res) => {
+router.get("/report/slow", requireAuth, (req, res) => {
   let total = 0;
   for (let i = 0; i < posts.length; i++) {
     for (let j = 0; j < posts.length; j++) {
