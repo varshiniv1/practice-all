@@ -12,6 +12,6 @@
     "no-unused-vars": "off",
     "no-eval": "error",
     "no-console": "off",
-    "@typescript-eslint/no-explicit-any": "off"
+    "@typescript-eslint/no-explicit-any": "warn"
   }
 }

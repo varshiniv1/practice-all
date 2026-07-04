@@ -20,6 +20,10 @@ router.post("/register", authLimiter, (req, res) => {
     return res.status(400).json({ error: "username and password required" });
   }
 
+  if (findUserByUsername(username)) {
+    return res.status(409).json({ error: "Username already taken" });
+  }
+
   const newUser = {
     id: `u${users.length + 1}`,
     username,

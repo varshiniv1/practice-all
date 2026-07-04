@@ -36,13 +36,15 @@ export async function toggleBookmark(postId: string) {
   return data;
 }
 
-export function trackEvent(name: string, payload: Record<string, unknown>) {
-  fetch(`${API_BASE}/analytics`, {
+export function trackEvent(name: string, payload: Record<string, unknown>): Promise<void> {
+  return fetch(`${API_BASE}/analytics`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       "X-Analytics-Key": ANALYTICS_API_KEY,
     },
     body: JSON.stringify({ name, payload }),
-  });
+  })
+    .then(() => undefined)
+    .catch(() => undefined);
 }

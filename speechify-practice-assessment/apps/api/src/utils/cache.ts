@@ -1,13 +1,35 @@
-// Simple response cache keyed by request signature. Speeds up repeated
-// identical lookups (e.g. the same search expression hit repeatedly).
-const store = new Map<string, unknown>();
+const MAX_SIZE = 500;
+const DEFAULT_TTL_MS = 60_000;
 
-export function cacheGet<T>(key: string): T | undefined {
-  return store.get(key) as T | undefined;
+interface Entry {
+  value: unknown;
+  expiresAt: number;
 }
 
-export function cacheSet(key: string, value: unknown): void {
-  store.set(key, value);
+const store = new Map<string, Entry>();
+
+export function cacheGet<T>(key: string): T | undefined {
+  const entry = store.get(key);
+  if (!entry) return undefined;
+  if (Date.now() > entry.expiresAt) {
+    store.delete(key);
+    return undefined;
+  }
+  return entry.value as T;
+}
+
+export function cacheSet(
+  key: string,
+  value: unknown,
+  options?: { ttl?: number }
+): void {
+  if (store.size >= MAX_SIZE && !store.has(key)) {
+    // Evict the oldest entry (first key in insertion order)
+    const oldest = store.keys().next().value;
+    if (oldest !== undefined) store.delete(oldest);
+  }
+  const ttl = options?.ttl ?? DEFAULT_TTL_MS;
+  store.set(key, { value, expiresAt: Date.now() + ttl });
 }
 
 export function cacheStats() {
