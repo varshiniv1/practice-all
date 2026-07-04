@@ -65,6 +65,9 @@ router.post("/:id/bookmark", requireAuth, (req: AuthedRequest, res) => {
 // GET /posts/attachments/:file -- serves post images/attachments
 router.get("/attachments/:file", (req, res) => {
   const filePath = path.join(ATTACHMENTS_DIR, req.params.file);
+  if (!filePath.startsWith(ATTACHMENTS_DIR + path.sep)) {
+    return res.status(400).json({ error: "Invalid file path" });
+  }
   fs.readFile(filePath, (err, data) => {
     if (err) return res.status(404).json({ error: "Not found" });
     res.send(data);
