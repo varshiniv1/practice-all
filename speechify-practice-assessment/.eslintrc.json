@@ -1,0 +1,17 @@
+{
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint"],
+  "extends": ["eslint:recommended"],
+  "env": {
+    "node": true,
+    "browser": true,
+    "es2021": true
+  },
+  "rules": {
+    "no-unused-vars": "off",
+    "no-eval": "off",
+    "no-console": "off",
+    "@typescript-eslint/no-explicit-any": "off"
+  }
+}
