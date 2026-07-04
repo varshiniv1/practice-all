@@ -22,8 +22,7 @@ export default function PostList({ filter }: { filter: string }) {
         <li key={post.id}>
           <h3>{post.title}</h3>
           <p>by {post.author?.username ?? "unknown"}</p>
-          {/* Post bodies can contain arbitrary HTML from other users. */}
-          <div dangerouslySetInnerHTML={{ __html: post.body }} />
+          <div>{post.body}</div>
           <BookmarkButton postId={post.id} />
         </li>
       ))}
