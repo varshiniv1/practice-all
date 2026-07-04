@@ -16,6 +16,7 @@ router.get("/:id", (req, res) => {
 // Requires *a* valid token, but never checks that the caller is updating
 // their own profile.
 router.patch("/:id", requireAuth, (req: AuthedRequest, res) => {
+  if (req.user!.sub !== req.params.id) return res.status(403).json({ error: "Forbidden" });
   const user = findUserById(req.params.id);
   if (!user) return res.status(404).json({ error: "Not found" });
 
@@ -27,6 +28,7 @@ router.patch("/:id", requireAuth, (req: AuthedRequest, res) => {
 });
 
 router.get("/", requireAuth, (req: AuthedRequest, res) => {
+  if (!req.user!.isAdmin) return res.status(403).json({ error: "Forbidden" });
   // Admin-only listing -- but the admin check was never actually wired up.
   res.json(users.map((u) => ({ id: u.id, username: u.username, email: u.email })));
 });
